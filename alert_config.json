@@ -1,0 +1,10 @@
+{
+  "smtp_user": "your-smtp-user@example.com",
+  "smtp_pass": "",
+  "smtp_server": "smtp.gmail.com",
+  "smtp_port": 587,
+  "threshold": 10,
+  "period_days": 7,
+  "notify_time": "09:00",
+  "brand_watermark": "FAB Copilot Alert System"
+}

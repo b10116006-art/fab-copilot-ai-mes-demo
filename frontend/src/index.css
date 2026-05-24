@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === 全域配置 === */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #050b18;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #050b18;
+  overflow-x: hidden;
+}
+
+/* 撐滿 root */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 連結 hover */
+a {
+  font-weight: 500;
+  color: #60a5fa;
+  text-decoration: none;
+}
+a:hover {
+  color: #93c5fd;
+}
+
+/* ==========================================================
+   ★ Ultra-Max Fab Control Room Background (Weak Scan)
+   ========================================================== */
+
+/* 低干擾背景呼吸光 */
+.fab-breath {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgba(0, 120, 255, 0.08),
+    transparent 70%
+  );
+  animation: breath 8s ease-in-out infinite;
+}
+
+@keyframes breath {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.55; }
+}
+
+/* 極細網格（工控 UI） */
+.fab-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+  background-size: 60px 60px;
+  background-image:
+    linear-gradient(to right, rgba(0, 140, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 140, 255, 0.12) 1px, transparent 1px);
+  animation: gridMove 24s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: -120px 120px; }
+}
+
+/* 極弱光掃描線（主要特色） */
+.fab-scanline {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(80, 160, 255, 0.05),
+    transparent
+  );
+  animation: scanMove 9s linear infinite;
+}
+
+@keyframes scanMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 垂直極淡掃描線（不會干擾文字） */
+.scan-vertical {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: rgba(120, 180, 255, 0.08);
+  pointer-events: none;
+  z-index: 3;
+  animation: scanV 14s linear infinite;
+}
+
+@keyframes scanV {
+  0% { left: -5%; }
+  100% { left: 105%; }
+}
+
+/* 水平極淡掃描線 */
+.scan-horizontal {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(120, 180, 255, 0.06);
+  pointer-events: none;
+  z-index: 3;
+  animation: scanH 20s linear infinite;
+}
+
+@keyframes scanH {
+  0% { top: -5%; }
+  100% { top: 105%; }
+}

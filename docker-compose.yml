@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mes_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_ROOT_USERNAME:-root}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_ROOT_PASSWORD:-changeme}"
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  web:
+    build: .
+    container_name: mes_copilot
+    ports:
+      - "5000:5000"
+    environment:
+      LINE_CHANNEL_SECRET: "${LINE_CHANNEL_SECRET}"
+      LINE_CHANNEL_ACCESS_TOKEN: "${LINE_CHANNEL_ACCESS_TOKEN}"
+      MONGO_URI: "mongodb://${MONGO_ROOT_USERNAME:-root}:${MONGO_ROOT_PASSWORD:-changeme}@mongo:27017/"
+      MONGO_DB: "${MONGO_DB:-mes_copilot}"
+      PUBLIC_BASE_URL: "${PUBLIC_BASE_URL:-http://localhost:5000}"
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+
+  alert:
+    build: .
+    container_name: mes_alert
+    command: ["python", "alert_monitor.py"]
+    environment:
+      MONGO_URI: "mongodb://${MONGO_ROOT_USERNAME:-root}:${MONGO_ROOT_PASSWORD:-changeme}@mongo:27017/"
+      SMTP_PASS: "${SMTP_PASS:-}"
+      # 本容器也會讀取 alert_config.json 中的 SMTP 與門檻
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:

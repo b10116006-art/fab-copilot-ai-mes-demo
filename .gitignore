@@ -1,0 +1,26 @@
+venv/
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+static/*.png
+static/*.pdf
+
+.claude/
+.claude-setup/
+*.bat
+*.docx
+*.pptx
+*.pdf
+*.zip
+Linebot*/
+CHATGPT_TRANSFER_PROMPT.md
+CHAT_TRANSFER_PROMPT.md
+
+# Data files (exclude real/sensitive customer data; keep small demo CSV in repo)
+*_Scrap_AutoAI_*.csv
+*_Scrap_AutoAI_*.xlsx
+*.xlsx
+!.env.example
