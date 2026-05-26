@@ -1,6 +1,6 @@
 // =============================================================
-// AiDecision.jsx — Phase C AI Decision & Explainability Page
-// Moved from Overview.jsx right column (C1~C6 workflow intelligence)
+// AiDecision.jsx — AI Decision & Explainability Page
+// Moved from Overview.jsx right column (workflow intelligence)
 // =============================================================
 
 import React, {
@@ -185,7 +185,7 @@ export default function AiDecision() {
     provider: "",
     model: "",
     rule_lines: [],
-    // Phase C6: workflow intelligence fields
+    // workflow intelligence fields
     workflow_context: null,
     trigger_gate: "",
     evidence_source: "",
@@ -236,7 +236,7 @@ export default function AiDecision() {
             : Array.isArray(aiRes?.rule_lines)
             ? aiRes.rule_lines
             : [],
-          // Phase C6: workflow intelligence fields
+          // workflow intelligence fields
           workflow_context: panel?.workflow_context || aiRes?.workflow_context || null,
           trigger_gate: panel?.action_trigger?.trigger_gate || aiRes?.action_trigger?.trigger_gate || "",
           evidence_source: panel?.evidence_source || aiRes?.evidence_source || "",
@@ -419,7 +419,7 @@ export default function AiDecision() {
                   </div>
                 )}
               </div>
-              {/* Phase C6: Decision Trace sub-row */}
+              {/* Decision Trace sub-row */}
               {(aiPanel?.workflow_context || aiPanel?.evidence_source || aiPanel?.line_trigger_preview !== null) && (
                 <div className="border-t border-blue-400/10 mt-2 pt-2 grid grid-cols-4 gap-x-2 gap-y-1 text-xs">
                   <div>

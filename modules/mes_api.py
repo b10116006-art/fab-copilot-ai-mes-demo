@@ -39,7 +39,7 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
 GEMINI_FLASH_MODEL = os.getenv("OPENROUTER_GEMINI_FLASH_MODEL", os.getenv("GEMINI_FLASH_MODEL", "google/gemini-flash-1.5")).strip()
 GEMINI_PRO_MODEL = os.getenv("OPENROUTER_GEMINI_PRO_MODEL", os.getenv("GEMINI_PRO_MODEL", "google/gemini-pro-1.5")).strip()
 
-# Phase E2 — LINE Bot execution config (safe defaults; execution disabled by default)
+# LINE Bot execution config (safe defaults; execution disabled by default)
 LINE_BOT_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "").strip()
 LINE_PUSH_USER_ID = (
     os.getenv("LINE_PUSH_USER_ID")
@@ -100,17 +100,17 @@ def _ensure_ai_memory_indexes() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Phase A — Memory Layer helpers
+# Memory Layer helpers
 # Sidecar only. Neither function ever raises — all exceptions are caught and
 # printed so they cannot affect the existing /overview/ai response contract.
 # ---------------------------------------------------------------------------
 
 def parse_llm_structured_output(reply: str) -> Dict[str, Any]:
     """
-    Phase B — extract structured fields from LLM reply.
+    Extract structured fields from LLM reply.
     Strategy 1: parse bare JSON or ```json fenced block.
     Strategy 2: line-based heuristic section extraction.
-    Strategy 3: safe defaults (Phase A behavior preserved).
+    Strategy 3: safe defaults (baseline behavior preserved).
     """
     out: Dict[str, Any] = {
         "summary": "",
@@ -293,7 +293,7 @@ def get_ranked_memory(
     limit: int = 3,
 ) -> List[Dict[str, Any]]:
     """
-    Phase B+ — ranked memory retrieval.
+    Ranked memory retrieval.
     Fetches a broader pool then scores each record by:
       score = 0.2 * anomaly_type_match + 0.5 * confidence + 0.3 * recency
     Uses the most recent record's anomaly_type as the match hint (pre-LLM proxy).
@@ -361,7 +361,7 @@ def format_memory_context(records: List[Dict[str, Any]]) -> str:
 
 def format_ranked_memory_context(records: List[Dict[str, Any]]) -> str:
     """
-    Phase B+ — prompt-ready formatting for ranked memory records.
+    Prompt-ready formatting for ranked memory records.
     Produces numbered 'Relevant past cases' block for LLM context injection.
     Returns empty string if no records (prompt injection safely skipped).
     """
@@ -384,7 +384,7 @@ def format_ranked_memory_context(records: List[Dict[str, Any]]) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Phase C1 — Workflow identity layer (lightweight sidecar, non-blocking)
+# Workflow identity layer (lightweight sidecar, non-blocking)
 
 def find_open_workflow(
     layer: str,
@@ -510,7 +510,7 @@ def should_auto_close(
     risk_level: str,
 ) -> bool:
     """
-    Phase C3 — demo heuristic only, not final fab rule.
+    Demo heuristic only, not a final fab rule.
     Auto-close is allowed ONLY for existing cases that are improving at LOW risk.
     """
     try:
@@ -523,7 +523,7 @@ def should_auto_close(
 
 def close_workflow(workflow_id: str, reason: str) -> None:
     """
-    Phase C3 — mark a workflow as resolved.
+    Mark a workflow as resolved.
     Non-fatal. Does not raise.
     """
     try:
@@ -544,7 +544,7 @@ def compute_trigger_gate(
     case_status: str,
 ) -> str:
     """
-    Phase C5 — explicit execution-safety gate for action triggers.
+    Explicit execution-safety gate for action triggers.
     Demo heuristic only — not final fab policy.
     Returns: "blocked" | "preview_eligible" | "advisory"
     Never raises.
@@ -562,7 +562,7 @@ def compute_trigger_gate(
 
 
 # ---------------------------------------------------------------------------
-# Phase D2b — anomaly tag extractor
+# Anomaly tag extractor
 def extract_anomaly_tag(reply: str) -> str:
     _VALID = {"scrap_high", "thk_drift", "machine_down",
               "particle", "scratch", "general"}
@@ -577,7 +577,7 @@ def extract_anomaly_tag(reply: str) -> str:
     return "general"
 
 
-# Phase C — Decision Layer
+# Decision Layer
 # Rule-based only. No new LLM call. Never raises.
 # decision:  monitor | investigate_machine | check_material |
 #            check_cleanliness | escalate
@@ -651,7 +651,7 @@ def derive_decision(
 
 
 # ---------------------------------------------------------------------------
-# Phase E1 — Action Trigger Layer
+# Action Trigger Layer
 # Maps workflow decision + priority to an external action trigger payload.
 # auto_execute is always False in this MVP.
 # Never raises.
@@ -668,7 +668,7 @@ def derive_action_trigger(
     Returns dict with keys:
         trigger_type, trigger_target, trigger_reason,
         suggested_channel, auto_execute
-    auto_execute is always False in Phase E1.
+    auto_execute is always False by default.
     """
     try:
         decision  = str(workflow.get("decision") or "monitor").lower()
@@ -720,7 +720,7 @@ def derive_action_trigger(
 
 
 # ---------------------------------------------------------------------------
-# Phase E2 — LINE Bot execution path
+# LINE Bot execution path
 # build_line_message_from_trigger : pure builder, never raises, no I/O
 # execute_line_trigger            : guarded async sender; auto_execute=False
 #                                   by default → preview only
@@ -777,7 +777,7 @@ async def execute_line_trigger(
     evd: Dict[str, Any],
 ) -> Dict[str, Any]:
     """
-    Phase E2: Execute or preview a LINE push notification derived from action_trigger.
+    Execute or preview a LINE push notification derived from action_trigger.
     - suggested_channel != line_bot  → status=skipped (non-fatal)
     - LINE_E2_AUTO_EXECUTE=false     → status=preview_ready (default safe path)
     - Token/user missing             → status=config_missing (non-fatal)
@@ -821,7 +821,7 @@ async def execute_line_trigger(
             "preview_payload": payload,
         }
 
-    # Phase C — dedup guard: skip if alert already sent within 10 min for same machine/layer
+    # Dedup guard: skip if alert already sent within 10 min for same machine/layer
     _machine_id = str(evd.get("top_machine") or "").upper() or None
     _layer_key  = str(evd.get("layer") or "").upper()
     try:
@@ -1424,7 +1424,7 @@ def scrap_table(layer: str, hours: int, limit_docs: int, max_rows: int) -> List[
 
 @app.get("/overview/scrap/week")
 def overview_scrap_week(layer: str = Query("ILD")) -> List[Dict[str, Any]]:
-    # Phase 0.6 — restore real aggregation (replaces Phase 0.5 [] stub).
+    # Real aggregation for the weekly scrap view (replaces an earlier empty-list stub).
     # Index-aware: relies on {layer:1, _id:-1} on realtime_scrap; max_rows caps payload.
     _t0 = now_utc().timestamp()
     _layer = parse_layer(layer)
@@ -1434,7 +1434,7 @@ def overview_scrap_week(layer: str = Query("ILD")) -> List[Dict[str, Any]]:
 
 @app.get("/overview/scrap/month")
 def overview_scrap_month(layer: str = Query("ILD")) -> List[Dict[str, Any]]:
-    # TEMP (Phase 0.6): still stubbed. Do NOT restore until /overview/scrap/week
+    # NOTE: monthly aggregation is intentionally a lightweight stub until /overview/scrap/week
     # latency is validated under live load with the {layer:1, _id:-1} index.
     # 720h × realtime_scrap is the heaviest scan in the system; reintroducing
     # it prematurely is the known regression path. Schema preserved (List[Dict]).
@@ -1454,7 +1454,7 @@ async def overview_ai(layer: str = Query("ILD"), model: str = Query("auto")) -> 
     print(f"[perf] endpoint=/overview/ai layer={layer} step=build_evidence took={(now_utc().timestamp()-_t):.3f}s", flush=True)
     rule_text = rule_summary_text(evd)
 
-    # Phase B+ — ranked memory retrieval (extends Phase A simple recency fetch)
+    # Ranked memory retrieval (extends the simple recency fetch)
     _top_machine = evd.get("top_machine") or evd.get("machine")
     _t = now_utc().timestamp()
     memory_records = get_ranked_memory(layer=layer, machine_id=_top_machine, limit=3)
@@ -1506,7 +1506,7 @@ async def overview_ai(layer: str = Query("ILD"), model: str = Query("auto")) -> 
         llm_error = f"{type(e).__name__}: {e}"
     print(f"[perf] endpoint=/overview/ai layer={layer} step=llm_call provider={provider} llm_ok={llm_ok} took={(now_utc().timestamp()-_t):.3f}s", flush=True)
 
-    # Phase B — parse structured fields, persist to memory
+    # Parse structured fields, persist to memory
     _parsed = parse_llm_structured_output(reply) if llm_ok else {
         "summary": "", "possible_root_causes": [], "engineering_evidence": [],
         "recommended_actions": [], "confidence": None, "anomaly_type": "general",
@@ -1525,7 +1525,7 @@ async def overview_ai(layer: str = Query("ILD"), model: str = Query("auto")) -> 
             window="24h",
         )
 
-    # Phase C — derive decision (rule-based, runs even when llm_ok=False)
+    # Derive decision (rule-based, runs even when llm_ok=False)
     _decision = derive_decision(evd, _parsed)
 
     print(f"[perf] endpoint=/overview/ai layer={layer} total={(now_utc().timestamp()-_t0):.3f}s", flush=True)
@@ -1553,7 +1553,7 @@ async def overview_ai_action(layer: str = Query("ILD"), model: str = Query("auto
     print(f"[perf] endpoint=/overview/ai/action layer={layer} step=build_evidence took={(now_utc().timestamp()-_t):.3f}s", flush=True)
     _prompt_risk = derive_risk_level(evd)
     _prompt_r_lines = rule_lines(evd)
-    # Phase C4 — inject ranked memory context into action prompt (matches /overview/ai)
+    # Inject ranked memory context into action prompt (matches /overview/ai)
     _prompt_top_machine = evd.get("top_machine") or evd.get("machine")
     _t = now_utc().timestamp()
     _prompt_memory_records = get_ranked_memory(layer=layer, machine_id=_prompt_top_machine, limit=3)
@@ -1596,7 +1596,7 @@ async def overview_ai_action(layer: str = Query("ILD"), model: str = Query("auto
         reply = "LLM 無回應，改用本地 Rule-based 建議：請檢查 Top 缺陷與 FEM/THK 趨勢。"
         llm_error = f"{type(e).__name__}: {e}"
     print(f"[perf] endpoint=/overview/ai/action layer={layer} step=llm_call provider={provider} llm_ok={llm_ok} took={(now_utc().timestamp()-_t):.3f}s", flush=True)
-    # Phase D3 — shared evidence alignment
+    # Shared evidence alignment
     _t = now_utc().timestamp()
     _shared_evd = evd
     _evd_source = "live"
@@ -1609,7 +1609,7 @@ async def overview_ai_action(layer: str = Query("ILD"), model: str = Query("auto
         if _mem and isinstance(_mem.get("evidence"), dict) and _mem["evidence"]:
             _shared_evd = _mem["evidence"]
             _evd_source = "memory"
-        # Phase A debug — alignment validation (remove after confirmed)
+        # Alignment validation (diagnostic check)
         print(f"[d3:mem] _id={_mem.get('_id') if _mem else None} "
               f"machine_id={_mem.get('machine_id') if _mem else None} "
               f"anomaly_type={_mem.get('anomaly_type') if _mem else None} "
@@ -1635,7 +1635,7 @@ async def overview_ai_action(layer: str = Query("ILD"), model: str = Query("auto
     }
     _workflow = derive_decision(_shared_evd, _action_parsed)
 
-    # Phase C1 — workflow identity layer (non-blocking sidecar)
+    # Workflow identity layer (non-blocking sidecar)
     _wf_machine = _shared_evd.get("top_machine") or _shared_evd.get("machine")
     _wf_anomaly = _anomaly_tag or "general"
     _existing_wf = find_open_workflow(layer=layer, machine=_wf_machine, anomaly_type=_wf_anomaly)
@@ -1647,7 +1647,7 @@ async def overview_ai_action(layer: str = Query("ILD"), model: str = Query("auto
         _is_existing = False
     _case_progression = compute_case_progression(_existing_wf, _shared_evd)
     _current_risk = derive_risk_level(_shared_evd)
-    # Phase C3 — closeout: guard ensures new cases are never auto-closed
+    # Closeout: guard ensures new cases are never auto-closed
     if should_auto_close(_is_existing, _case_progression, _current_risk):
         close_workflow(_workflow_id, "auto_rule: improving + LOW risk")
         _case_status = "resolved"
@@ -1674,10 +1674,10 @@ async def overview_ai_action(layer: str = Query("ILD"), model: str = Query("auto
         case_progression=_case_progression,
     )
 
-    # Phase E1 — derive external action trigger from workflow
+    # Derive external action trigger from workflow
     _trigger = derive_action_trigger(_workflow, _shared_evd)
 
-    # Phase C5 — gate: inject trigger_gate; suppress preview when blocked
+    # Gate: inject trigger_gate; suppress preview when blocked
     _trigger["trigger_gate"] = compute_trigger_gate(_trigger, _case_status)
     _line_preview = (
         build_line_message_from_trigger(_trigger, _shared_evd)
@@ -1824,7 +1824,7 @@ def mes_thickness_trend(layer: str = Query("PSG"), hours: int = Query(24, ge=1, 
     return [{"timestamp": (doc_ts(d).isoformat() if doc_ts(d) else ""), "thk": doc_thk(d)} for d in docs]
 
 
-# Phase 0.8 — AOI -> MES decision sidecar. Pure additive router; no existing
+# AOI -> MES decision sidecar. Pure additive router; no existing
 # route, schema, or contract is changed. Mounted at end-of-file so all helpers
 # this module exposes are already defined when aoi_decision lazy-imports them.
 try:
