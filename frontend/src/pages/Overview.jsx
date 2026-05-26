@@ -682,7 +682,7 @@ export default function Overview() {
     provider: "",
     model: "",
     rule_lines: [],
-    // Phase C6: workflow intelligence fields
+    // workflow intelligence fields
     workflow_context: null,
     trigger_gate: "",
     evidence_source: "",
@@ -775,7 +775,7 @@ export default function Overview() {
             : Array.isArray(aiRes?.rule_lines)
             ? aiRes.rule_lines
             : [],
-          // Phase C6: workflow intelligence fields
+          // workflow intelligence fields
           workflow_context: panel?.workflow_context || aiRes?.workflow_context || null,
           trigger_gate: panel?.action_trigger?.trigger_gate || aiRes?.action_trigger?.trigger_gate || "",
           evidence_source: panel?.evidence_source || aiRes?.evidence_source || "",
