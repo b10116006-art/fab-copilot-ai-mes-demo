@@ -75,6 +75,6 @@
 
 ## 8. Future work
 
-- **Phase B++** (or later): integrate AOI evidence with RAG grounding so decision rationales can cite prior similar cases and runbooks.
+- **Later phase:** integrate AOI evidence with RAG grounding so decision rationales can cite prior similar cases and runbooks.
 - Persist AOI evidence (`image_id` ↔ `decision_id` ↔ `trace_id`) for audit, replay, and retrieval.
 - End-to-end demo notebook: AOI inference → sidecar `POST /aoi/decision` → MES decision surface → audit trail.
