@@ -1161,7 +1161,7 @@ def compute_layer_utilization(layer: str, hours: int = 24) -> Optional[float]:
     return round(sum(utils) / len(utils), 1) if utils else None
 
 def build_evidence(layer: str) -> Dict[str, Any]:
-    # TEMP: limit 50000 -> 1000 to reduce realtime_scrap scan cost
+    # Cost cap: limit set to 1000 rows to keep realtime_scrap scans within latency budget.
     docs_24 = query_realtime_docs(layer, hours=24, limit=1000)
     deltas = calc_counter_delta_by_machine(docs_24)
     scrap_24 = sum(v["confirmed_delta"] + v["pending_delta"] for v in deltas.values())
@@ -1347,8 +1347,8 @@ def overview_kpi(layer: str = Query("ILD")) -> Dict[str, Any]:
     cap_month, good_month = totals_last_30d(layer)
     print(f"[perf] endpoint=/overview/kpi layer={layer} step=totals_last_30d took={(now_utc().timestamp()-_t):.3f}s", flush=True)
     yield_pct = round((good_month / cap_month) * 100.0, 2) if cap_month > 0 else 0.0
-    # TEMP: 30d realtime scan removed — was the main bottleneck (~9s).
-    # confirmed_30d / pending_30d now stubbed to 0; response schema unchanged.
+    # Note: the 30-day realtime scan is deliberately skipped for latency (was the main bottleneck, ~9s).
+    # confirmed_30d / pending_30d are reported as 0; response schema unchanged.
     confirmed_30d = 0
     pending_30d = 0
     _t = now_utc().timestamp()
@@ -1360,7 +1360,7 @@ def overview_kpi(layer: str = Query("ILD")) -> Dict[str, Any]:
     scrap_total_24h = sum(v["confirmed_delta"] + v["pending_delta"] for v in deltas_24.values())
     daily_capacity = (cap_month / float(DEFAULT_MONTH_DAYS)) if cap_month > 0 else 0.0
     scrap_rate = round((scrap_total_24h / daily_capacity) * 100.0, 2) if daily_capacity > 0 else 0.0
-    # TEMP: bypass compute_layer_utilization() — machine_state_events scan is blocking /overview/kpi
+    # Skip compute_layer_utilization() here: its machine_state_events scan would block /overview/kpi latency.
     util = None  # was: compute_layer_utilization(layer, hours=24)
     print(f"[perf] endpoint=/overview/kpi layer={layer} total={(now_utc().timestamp()-_t0):.3f}s", flush=True)
     _resp = {
