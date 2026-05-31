@@ -1,0 +1,58 @@
+name: Build Verification
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Repo hygiene and secret-pattern scan
+        run: |
+          fail=""
+
+          # Hygiene: no forbidden tracked artifacts
+          forbidden=$(git ls-files | grep -Ei 'node_modules|dist/|(^|/)\.env($|\.)|FRESHCOPY|CLONE_VERIFY|STAGE1B|backup|mirror' || true)
+          [ -z "$forbidden" ] && echo "OK: no forbidden tracked artifacts" || { echo "::error::Forbidden tracked artifacts detected:"; echo "$forbidden"; fail=1; }
+
+          # Secret-pattern scan: fail on obvious hardcoded secrets
+          # Excludes: this workflow file (contains the patterns as grep arguments) and the npm lockfile.
+          PATTERNS='mongodb\+srv://[^/@[:space:]]+:[^/@[:space:]]+@|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-proj-[A-Za-z0-9]{16,}|sk-or-v1-[A-Za-z0-9]{16,}'
+          secrets=$(git grep -nIE "$PATTERNS" -- . ':(exclude).github/workflows/build.yml' ':(exclude)frontend/package-lock.json' || true)
+          [ -z "$secrets" ] && echo "OK: no hardcoded secret patterns" || { echo "::error::Hardcoded secret pattern detected. Remove the value and rotate the credential."; echo "$secrets"; fail=1; }
+
+          # Single fail point for both checks
+          [ -z "$fail" ] || exit 1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Backend syntax check (py_compile)
+        run: python -m py_compile modules/mes_api.py
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Frontend install (npm ci)
+        working-directory: frontend
+        run: npm ci
+
+      - name: Frontend build (npm run build)
+        working-directory: frontend
+        run: npm run build
