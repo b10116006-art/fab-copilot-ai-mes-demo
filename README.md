@@ -2,6 +2,8 @@
 
 > A semiconductor-fab dashboard that grew into a memory-aware AI copilot for engineering decisions. Realtime MES data → structured anomaly analysis → workflow continuity → decision support.
 
+[![Build Verification](https://github.com/b10116006-art/fab-copilot-ai-mes-demo/actions/workflows/build.yml/badge.svg)](https://github.com/b10116006-art/fab-copilot-ai-mes-demo/actions/workflows/build.yml)
+
 **Status:** buildable **public v0 candidate**. This is the no-auth, dashboard-only public snapshot. The React frontend builds clean; the FastAPI backend is included and designed to run against MongoDB + MQTT, but is **not yet verified end-to-end** in this snapshot. See the Public release roadmap below.
 
 ---
