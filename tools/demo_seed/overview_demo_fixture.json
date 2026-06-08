@@ -1,0 +1,183 @@
+{
+  "_meta": {
+    "schema_version": "0.8.9B-2",
+    "fixture_name": "overview_demo_fixture",
+    "data_kind": "synthetic-demo",
+    "layer": "ILD",
+    "machines": [
+      "CMP-01",
+      "CMP-02",
+      "CMP-03"
+    ],
+    "lot_range": [
+      "LOT-DEMO-001",
+      "LOT-DEMO-012"
+    ],
+    "description": "Synthetic Overview demo seed. No real fab, customer, lot, person, or secret data.",
+    "demo_story": {
+      "top_machine": "CMP-03",
+      "top_defect": "Particle",
+      "risk_level": "HIGH"
+    },
+    "transport_notes": {
+      "date_offset_days": "days relative to seed run date; seed converts to a YYYY-MM-DD date string",
+      "minutes_ago": "minutes before seed run time; seed converts to a real UTC timestamp datetime",
+      "counters": "confirmed/pending/events are cumulative per machine; 24h scrap = last-minus-first delta",
+      "windows": "rows sit inside the 24h window (also inside the 168h weekly-table window)"
+    }
+  },
+  "mes_totals": [
+    {
+      "date_offset_days": -1,
+      "layer": "ILD",
+      "wafer_total": 20000,
+      "scrap_total": 300
+    },
+    {
+      "date_offset_days": -2,
+      "layer": "ILD",
+      "wafer_total": 19500,
+      "scrap_total": 270
+    },
+    {
+      "date_offset_days": -3,
+      "layer": "ILD",
+      "wafer_total": 20500,
+      "scrap_total": 333
+    }
+  ],
+  "realtime_scrap": [
+    {
+      "minutes_ago": 1380,
+      "layer": "ILD",
+      "machine": "CMP-01",
+      "lot": "LOT-DEMO-001",
+      "defect_type": "Scratch",
+      "thk": 101.0,
+      "confirmed": 4,
+      "pending": 0,
+      "events": 120
+    },
+    {
+      "minutes_ago": 900,
+      "layer": "ILD",
+      "machine": "CMP-01",
+      "lot": "LOT-DEMO-002",
+      "defect_type": "Scratch",
+      "thk": 100.4,
+      "confirmed": 5,
+      "pending": 1,
+      "events": 180
+    },
+    {
+      "minutes_ago": 420,
+      "layer": "ILD",
+      "machine": "CMP-01",
+      "lot": "LOT-DEMO-003",
+      "defect_type": "Particle",
+      "thk": 99.8,
+      "confirmed": 6,
+      "pending": 1,
+      "events": 240
+    },
+    {
+      "minutes_ago": 60,
+      "layer": "ILD",
+      "machine": "CMP-01",
+      "lot": "LOT-DEMO-004",
+      "defect_type": "Scratch",
+      "thk": 99.2,
+      "confirmed": 7,
+      "pending": 2,
+      "events": 300
+    },
+    {
+      "minutes_ago": 1320,
+      "layer": "ILD",
+      "machine": "CMP-02",
+      "lot": "LOT-DEMO-005",
+      "defect_type": "Particle",
+      "thk": 100.6,
+      "confirmed": 6,
+      "pending": 1,
+      "events": 140
+    },
+    {
+      "minutes_ago": 840,
+      "layer": "ILD",
+      "machine": "CMP-02",
+      "lot": "LOT-DEMO-006",
+      "defect_type": "Particle",
+      "thk": 100.1,
+      "confirmed": 9,
+      "pending": 2,
+      "events": 210
+    },
+    {
+      "minutes_ago": 360,
+      "layer": "ILD",
+      "machine": "CMP-02",
+      "lot": "LOT-DEMO-007",
+      "defect_type": "Dishing",
+      "thk": 99.5,
+      "confirmed": 11,
+      "pending": 2,
+      "events": 280
+    },
+    {
+      "minutes_ago": 30,
+      "layer": "ILD",
+      "machine": "CMP-02",
+      "lot": "LOT-DEMO-008",
+      "defect_type": "Particle",
+      "thk": 99.0,
+      "confirmed": 13,
+      "pending": 3,
+      "events": 350
+    },
+    {
+      "minutes_ago": 1260,
+      "layer": "ILD",
+      "machine": "CMP-03",
+      "lot": "LOT-DEMO-009",
+      "defect_type": "Particle",
+      "thk": 102.3,
+      "confirmed": 8,
+      "pending": 1,
+      "events": 160
+    },
+    {
+      "minutes_ago": 780,
+      "layer": "ILD",
+      "machine": "CMP-03",
+      "lot": "LOT-DEMO-010",
+      "defect_type": "Particle",
+      "thk": 101.5,
+      "confirmed": 12,
+      "pending": 2,
+      "events": 250
+    },
+    {
+      "minutes_ago": 300,
+      "layer": "ILD",
+      "machine": "CMP-03",
+      "lot": "LOT-DEMO-011",
+      "defect_type": "Erosion",
+      "thk": 100.7,
+      "confirmed": 16,
+      "pending": 3,
+      "events": 340
+    },
+    {
+      "minutes_ago": 15,
+      "layer": "ILD",
+      "machine": "CMP-03",
+      "lot": "LOT-DEMO-012",
+      "defect_type": "Particle",
+      "thk": 99.9,
+      "confirmed": 20,
+      "pending": 4,
+      "events": 430
+    }
+  ]
+}
