@@ -115,7 +115,7 @@ npm run build      # production build → dist/
 npm run dev        # local dev server on http://localhost:5173
 ```
 
-Configure the backend base URL in `frontend/.env` (defaults to `http://127.0.0.1:5000`):
+Configure the backend base URL in `frontend/.env` (copy from `frontend/.env.example`; defaults to `http://127.0.0.1:5000`):
 
 ```
 VITE_API_BASE_URL=http://127.0.0.1:5000
@@ -125,7 +125,10 @@ VITE_API_BASE_URL=http://127.0.0.1:5000
 
 - Install dependencies: `pip install -r requirements.txt`
 - Provide environment values for MongoDB and MQTT (and an OpenAI/OpenRouter key for LLM features). No secrets are committed.
-- Serve the FastAPI app in `modules/mes_api.py` with an ASGI server such as uvicorn, on port 5000.
+- Serve the FastAPI app (`modules/mes_api.py`, ASGI object `app`) with uvicorn on port 5000:
+  ```bash
+  uvicorn modules.mes_api:app --host 0.0.0.0 --port 5000
+  ```
 - A container path is also provided via `docker-compose.yml` / `Dockerfile`.
 
 ## Engineering approach
