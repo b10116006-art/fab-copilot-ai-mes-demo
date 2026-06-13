@@ -10,10 +10,9 @@ requests==2.32.3
 matplotlib==3.10.0
 rapidfuzz==3.14.1
 pandas==2.2.3
-chardet
-pandas
-matplotlib
-pymongo
-flask
-gunicorn
-line-bot-sdk
+# FastAPI backend runtime — required to run modules/mes_api.py (see README quick start)
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+httpx==0.28.1
+pydantic==2.10.4
+paho-mqtt==2.1.0
