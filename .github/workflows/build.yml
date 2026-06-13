@@ -22,7 +22,7 @@ jobs:
           fail=""
 
           # Hygiene: no forbidden tracked artifacts
-          forbidden=$(git ls-files | grep -Ei 'node_modules|dist/|(^|/)\.env($|\.)|FRESHCOPY|CLONE_VERIFY|STAGE1B|backup|mirror' || true)
+          forbidden=$(git ls-files | grep -Ei 'node_modules|dist/|(^|/)\.env($|\.)|FRESHCOPY|CLONE_VERIFY|STAGE1B|backup|mirror' | grep -viE '(^|/)\.env\.example$' || true)
           [ -z "$forbidden" ] && echo "OK: no forbidden tracked artifacts" || { echo "::error::Forbidden tracked artifacts detected:"; echo "$forbidden"; fail=1; }
 
           # Secret-pattern scan: fail on obvious hardcoded secrets
