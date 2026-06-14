@@ -31,6 +31,18 @@ Manufacturing execution systems generate thousands of machine-state and scrap ev
 - **LLM decision layer** — structured-output anomaly analysis with strict JSON guards, fed by ranked historical memory, returning typed JSON the frontend can render directly.
 - **Memory layer (MVP)** — AI summaries persist to an `ai_memory_events` sidecar collection and are surfaced as ranked context on subsequent calls, enabling case continuity across sessions.
 
+## Screenshots
+
+All screenshots use synthetic demo data (`tools/demo_seed`) and contain no real fab data.
+
+**Machines** — equipment-state cards and utilization rows using synthetic ILD demo data.
+
+![FAB Copilot Machines dashboard with synthetic demo data](docs/assets/machines-dashboard.png)
+
+**AI Decision** — structured anomaly analysis with rule-based fallback when no LLM key is configured.
+
+![FAB Copilot AI Decision dashboard with synthetic demo data](docs/assets/ai-decision-dashboard.png)
+
 ## Architecture
 
 ```mermaid
